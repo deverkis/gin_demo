@@ -9,5 +9,5 @@ import (
 func main() {
 	r := gin.Default()
 	routers.Index(r)
-	r.Run()
+	r.Run(":9090")
 }

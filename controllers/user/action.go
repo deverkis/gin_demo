@@ -1,24 +1,14 @@
 package user
 
 import (
-	"fmt"
 	"gin_demo/core"
-
 	"github.com/gin-gonic/gin"
 )
+var con core.Controller
 
-type Controller struct {
-	core.Controller
-}
-
-func (con Controller) Lists(c *gin.Context) {
-	var data struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
-	data.Id = 123
-	data.Name = "Hey"
-	con.Message = "success"
-	fmt.Println(data)
-	con.Success(c, data)
+func Lists(c *gin.Context) {
+  con.Code = 200
+  con.Message = "success"
+  con.Data = "abc"
+	con.Output(c)
 }

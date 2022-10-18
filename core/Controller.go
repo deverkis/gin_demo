@@ -10,13 +10,14 @@ import (
 type Controller struct {
 	Code    int
 	Message string
+  Data interface{}
 }
 
-func (con Controller) Success(c *gin.Context, data interface{}) {
-	fmt.Println(data)
+func (con Controller) Output(c *gin.Context) {
+  fmt.Println(con)
 	c.JSON(http.StatusOK, gin.H{
-		"code":    200,
-		"message": con.Message,
-		"data":    data,
+		"code":    con.Code,
+		"message":    con.Message,
+		"data":    con.Data,
 	})
 }
