@@ -11,6 +11,6 @@ func Lists(c *gin.Context) {
   var mm member.Model;
   con.Code = 200
   con.Message = "success"
-  con.Data = mm.Lists()
+  con.Data, _ = mm.Lists()
 	con.Output(c)
 }
