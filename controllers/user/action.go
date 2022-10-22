@@ -9,8 +9,13 @@ var con core.Controller
 
 func Lists(c *gin.Context) {
   var mm member.Model;
+  var page Page
+  var where core.Where
+  c.Bind(&page)
   con.Code = 200
   con.Message = "success"
-  con.Data, _ = mm.Lists()
+  where := map[string]interfaces{id:1}
+  con.Data.Total = mm.Lists(page, where)
+  con.Data.Total = mm.Lists(page, where)
 	con.Output(c)
 }

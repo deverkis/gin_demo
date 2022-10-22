@@ -11,4 +11,7 @@ func Index(r *gin.Engine) {
 	{
 		router_user.GET("/lists", user.Lists)
 	}
+
+
+
 }

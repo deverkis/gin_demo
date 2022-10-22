@@ -2,30 +2,26 @@ package member
 
 import (
   "fmt"
-    "database/sql"
 	"gin_demo/core"
+  "gorm.io/gorm"
+  "gorm.io/driver/mysql"
 )
 
-type Model struct {
-  core.Model
+type ApiMember struct {
+  ID   uint
+  Name string
 }
 
-type Items struct {
-  Id int64
-  Ename string 
-  Name string 
-}
-
-func (m Model) Lists() (Items, error) {
-  m.Table = "items"
-  var alb Items
-  id := 1
-  row := m.FetchRow(id)
-  if err := row.Scan(&alb.Id, &alb.Ename, &alb.Name); err != nil {
-      if err == sql.ErrNoRows {
-          return alb, fmt.Errorf("albumsById %d: no such album", id)
-      }
-      return alb, fmt.Errorf("albumsById %d: %v", id, err)
-  }
-  return alb, nil
+func Lists(page core.Page, where map[string]interface{}) {
+  model :=core.DB.Table("member")
+  if(page.Type=='count'){
+    var total int
+    model.Count(@page.Total)
+    return total
+  } 
+  var apiMember []ApiMember
+  model.Select("id,created_at,updated_at,name,age,birth")
+  model.Offet((page.Page-) * page.PageSize).Limit(page.PageSize)
+  model.Find(&apiMember)
+  return apiMember
 }

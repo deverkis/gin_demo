@@ -1,0 +1,125 @@
+package member
+
+type User struct {
+  ID     uint
+  Name   string
+  Age    int
+  Gender string
+  // 假设后面还有几百个字段...
+}
+
+type APIUser struct {
+  ID   uint
+  Name string
+}
+
+func test1(){
+  var users APIUser
+  db.Model(&User{}).Limit(10).Find(&users)
+}
+
+
+
+package member
+
+import (
+  "fmt"
+	"gin_demo/core"
+  "gorm.io/gorm"
+  "gorm.io/driver/mysql"
+)
+
+type Model struct {
+  core.Model
+}
+
+type Member struct {
+  gorm.Model
+  Id int64
+  Nickname string 
+}
+
+type User struct {
+  ID   int64
+  Name string `gorm:"default:galeone"`
+  Age  int64  `gorm:"default:18"`
+}
+
+func (m Member) Lists() (Items, error) {
+  m.Table = "items"
+}
+
+//批量插入
+func (m Member) AddMore(){
+  var users = []User{{Name: "jinzhu1"}, {Name: "jinzhu2"}, {Name: "jinzhu3"}}
+  db.Create(&users)
+
+  for _, user := range users {
+    fmt.Println(user.ID)
+  }
+}
+//使用 CreateInBatches 分批创建时，你可以指定每批的数量，例如：
+func (m Member) AddMore2(){
+  var users = []User{{name: "jinzhu_1"}, {Name: "jinzhu2"}, {Name: "jinzhu_10000"}}
+
+  // 数量为 100
+  db.CreateInBatches(users, 100)
+}
+
+//
+func (m Member) Add(){
+  user := User{Name: "Jinzhu", Age: 18, Birthday: time.Now()}
+
+  result := db.Create(&user) // 通过数据的指针来创建
+}
+
+func (u *Member) BeforeCreate(tx *gorm.DB) (err error) {
+  u.UUID = uuid.New()
+
+    if u.Role == "admin" {
+        return errors.New("invalid role")
+    }
+    return
+    //如果您想跳过 钩子 方法，您可以使用 SkipHooks 会话模式，例如：
+    //DB.Session(&gorm.Session{SkipHooks: true}).Create(&user)
+}
+
+func AddMore3(){
+  db.Model(&User{}).Create(map[string]interface{}{
+    "Name": "jinzhu", "Age": 18,
+  })
+
+  // batch insert from `[]map[string]interface{}{}`
+  db.Model(&User{}).Create([]map[string]interface{}{
+    {"Name": "jinzhu_1", "Age": 18},
+    {"Name": "jinzhu_2", "Age": 20},
+  })
+}
+
+func (m Member) Lists2() {
+  dsn := "root:123456@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
+  db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+  if err != nil {
+    panic("failed to connect database")
+  }
+
+  // 迁移 schema
+  db.AutoMigrate(&Member{})
+
+  // Create
+  db.Create(&Member{Code: "D42", Price: 100})
+
+  // Read
+  var product Member
+  db.First(&product, 1) // 根据整型主键查找
+  db.First(&product, "code = ?", "D42") // 查找 code 字段值为 D42 的记录
+
+  // Update - 将 product 的 price 更新为 200
+  db.Model(&product).Update("Price", 200)
+  // Update - 更新多个字段
+  db.Model(&product).Updates(Member{Price: 200, Code: "F42"}) // 仅更新非零值字段
+  db.Model(&product).Updates(map[string]interface{}{"Price": 200, "Code": "F42"})
+
+  // Delete - 删除 product
+  db.Delete(&product, 1)
+}
