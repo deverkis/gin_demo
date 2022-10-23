@@ -1,15 +1,14 @@
 package routers
 
 import (
-	"gin_demo/controllers/user"
-
+	items "gin_demo/controllers/items"
 	"github.com/gin-gonic/gin"
 )
 
 func Index(r *gin.Engine) {
-	router_user := r.Group("/user")
+	r1 := r.Group("/items")
 	{
-		router_user.GET("/lists", user.Lists)
+		r1.GET("/lists", items.Lists)
 	}
 
 
