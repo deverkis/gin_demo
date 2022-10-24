@@ -1,29 +1,24 @@
 package core
 
-import (
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-)
-type Controller struct {
-	Code    int
-	Message string
-  Data interface{}
+type BaseAction struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    DataVo `json:"data"`
 }
 
 type DataVo struct {
-	Total    int
-	PageSize    int
-	Page    int
-  List interface{}
+	Total    int         `json:"total"`
+	PageSize int         `json:"page_size"`
+	Page     int         `json:"page"`
+	List     interface{} `json:"list"`
 }
 
-func (con Controller) Output(page Pagination, list interface{}) {
-  data:=DataVo{
-    Total : page.Total,
-    PageSize : page.PageSize,
-    Page : page.Page,
-    List: list,
-  }
-	c.JSON(http.StatusOK, data)
+func (con *BaseAction) Lists(pagination Pagination, list interface{}) {
+	data := DataVo{
+		Total:    pagination.Total,
+		PageSize: pagination.PageSize,
+		Page:     pagination.Page,
+		List:     list,
+	}
+	con.Data = data
 }
