@@ -9,18 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Keyword struct {
-	Category string
-}
-
 func Lists(c *gin.Context) {
 	var model items.ItemsDao
 	var pagination core.Pagination
-	var keyword Keyword
-	c.Bind(&keyword)
-	total, err := model.ListsCount(keyword)
+	total,_, err := model.Lists(core.Pagination{Type:"count"}, c)
 	pagination.Init(c, total)
-	list, err := model.Lists(pagination, keyword)
+	_, list, err := model.Lists(pagination, c)
 	if err != nil {
 		fmt.Println("err", err)
 	}

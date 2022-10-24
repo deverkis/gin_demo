@@ -1,15 +1,15 @@
 package core
 
 type BaseAction struct {
-	Code    int    `json:"code"`
+	Code    int64    `json:"code"`
 	Message string `json:"message"`
 	Data    DataVo `json:"data"`
 }
 
 type DataVo struct {
-	Total    int         `json:"total"`
+	Total    int64         `json:"total"`
 	PageSize int         `json:"page_size"`
-	Page     int         `json:"page"`
+	Page     int64         `json:"page"`
 	List     interface{} `json:"list"`
 }
 

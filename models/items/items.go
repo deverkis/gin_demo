@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gin_demo/core"
 	"gin_demo/models"
+	"github.com/gin-gonic/gin"
 )
 
 type ItemsDao struct {
@@ -23,19 +24,23 @@ func (ItemsDao) TableName() string {
 	return "items"
 }
 
-func (c ItemsDao) ListsCount(where interface{}) (ret int, err error) {
-	var total int64
-	fmt.Println("ListsCount ")
-	db := models.DB.Table("items")
-	db.Count(&total)
-	fmt.Println("total", total)
-	ret = int(total)
-	return
+type ListsKeyword struct {
+	Category string `json:"category" form:"category"`
 }
 
-func (c ItemsDao) Lists(page core.Pagination, where interface{}) (vos []ListVO, err error) {
+func (m ItemsDao) Lists(page core.Pagination, c *gin.Context) (total int64, vos []ListVO, err error) {
 	//var vos []ListVO
+  var keyword ListsKeyword
 	db := models.DB.Table("items")
+  c.Bind(&keyword)
+  //where
+  if keyword.Category != "" {
+    db.Where("category",keyword.Category)
+  }
+  if(page.Type == "count") {
+    db.Count(&total)
+    return
+  }
 	db.Select("id,ename,name,price")
 	fmt.Println(page)
 	db.Offset(page.Offset).Limit(page.PageSize).Find(&vos)
