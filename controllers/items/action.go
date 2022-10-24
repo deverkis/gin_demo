@@ -9,8 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//var Cc core.Controller
-
 type Keyword struct {
 	Category string
 }
@@ -20,10 +18,8 @@ func Lists(c *gin.Context) {
 	var pagination core.Pagination
 	var keyword Keyword
 	c.Bind(&keyword)
-	c.Bind(&pagination)
 	total, err := model.ListsCount(keyword)
-	pagination.Total = total
-	pagination.CreateLimit()
+	pagination.Init(c, total)
 	list, err := model.Lists(pagination, keyword)
 	if err != nil {
 		fmt.Println("err", err)

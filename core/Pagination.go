@@ -2,6 +2,8 @@ package core
 
 import (
 	"math"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Pagination struct {
@@ -10,6 +12,12 @@ type Pagination struct {
 	PageSize int
 	Total    int
 	Type     string
+}
+
+func (p *Pagination) Init(c *gin.Context, total int) {
+	c.Bind(&p)
+	p.Total = total
+  p.CreateLimit()
 }
 
 func (p *Pagination) CreateLimit() {
